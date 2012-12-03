@@ -2,3 +2,4 @@
 /application/cache/
 /application/logs/
 /application/searchindex/
+/_install.php
