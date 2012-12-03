@@ -35,7 +35,7 @@ class Manager_PageMap {
         /* @var $widget Model_Widget */
         foreach ($this->page->getWidgets() as $widget)
         {
-            $this->map[$widget->getPositionForPage($this->page)->getName()][$widget->getSequenceOnPage($this->page)] = $widget;
+            $this->map[$widget->getPosition()->getName()][$widget->getSequence()] = $widget;
         }
 
         foreach ($this->map as $positionName => $entities)

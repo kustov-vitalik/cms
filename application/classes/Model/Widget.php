@@ -139,6 +139,12 @@ class Model_Widget extends ORM {
         return $this->pageConfig;
     }
 
+    public function setConfig($config)
+    {
+        $this->pageConfig = $config;
+        return $this;
+    }
+
     protected $configsForPage = array();
 
     /**
@@ -173,6 +179,12 @@ class Model_Widget extends ORM {
                     ->find();
         }
         return $this->position;
+    }
+
+    public function setPosition($position)
+    {
+        $this->position = $position;
+        return $this;
     }
 
     protected $positionsForPage = array();
@@ -375,6 +387,20 @@ class Model_Widget extends ORM {
                 ->execute($this->_db);
 
         return $inner[0]['sequence'];
+    }
+
+    private $currentSequence;
+
+
+    public function getSequence()
+    {
+        return $this->currentSequence;
+    }
+
+    public function setSequence($sequence)
+    {
+        $this->currentSequence = $sequence;
+        return $this;
     }
 
     public function setSequenceOnPageCurrentPosition(Model_Page $page, $sequence)

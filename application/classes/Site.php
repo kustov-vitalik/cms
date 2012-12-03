@@ -23,9 +23,11 @@ class Site {
         $this->currentPage = new Model_Page(array('url' => $url));
         $this->getCurrentPage()->setThisCurrent();
 
+        $this->getCurrentPage()->optimize();
+
         //$this->test_Module();
 
-        
+
     }
 
     private function __clone()

@@ -409,6 +409,12 @@ class Model_Page extends ORM {
         return $this->widgets;
     }
 
+    public function setWidgets($widgets)
+    {
+        $this->widgets = $widgets;
+        return $this;
+    }
+
     /**
      * Получение виджета с именем $name
      * @param string $name
@@ -533,6 +539,65 @@ class Model_Page extends ORM {
         {
             throw $exc;
             return FALSE;
+        }
+    }
+
+    public function optimize()
+    {
+
+        $widgets   = new Model_Widget();
+        $configs   = new Model_Config();
+        $positions = new Model_Position();
+
+        $map = DB::select()
+                ->from('page_widget')
+                ->where('page_id', '=', $this->pk())
+                ->execute();
+
+        $arrayWidgets = array();
+        $arrayConfigs = array();
+
+        foreach ($map as $mapItem)
+        {
+            array_push($arrayWidgets, $mapItem['widget_id']);
+            array_push($arrayConfigs, $mapItem['config_id']);
+        }
+
+        $positions = $positions->find_all();
+        $widgets   = $widgets->where('widget_id', 'IN', $arrayWidgets)->find_all();
+        $configs   = $configs->where('config_id', 'IN', $arrayConfigs)->find_all();
+
+
+        foreach ($map as $mapItem)
+        {
+
+            foreach ($widgets as $widget)
+            {
+                if ($widget->pk() == $mapItem['widget_id'])
+                {
+
+                    foreach ($configs as $config)
+                    {
+                        if ($config->pk() == $mapItem['config_id'])
+                        {
+                            $widget->setConfig($config);
+                            break;
+                        }
+                    }
+
+                    foreach ($positions as $position)
+                    {
+                        if ($position->pk() == $mapItem['position_id'])
+                        {
+                            $widget->setPosition($position);
+                        }
+                    }
+
+                    $widget->setSequence($mapItem['sequence']);
+                    $widget->registerPage($this);
+                    $this->widgets[] = $widget;
+                }
+            }
         }
     }
 
