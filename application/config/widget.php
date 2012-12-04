@@ -108,4 +108,23 @@ return array(
             ),
         )
     ),
+    'ArbiraryCode'   => array(
+        'name'            => 'ArbiraryCode',
+        'title'           => 'Виджет произвольного кода',
+        'type'            => 'page_widget',
+        'enable'          => 1,
+        'description'     => 'Настройки для виджета "ArbiraryCode" - виджета произвольного кода',
+        'defaultPosition' => 'left',
+        'group'           => array(
+            array(
+                'name'            => 'code',
+                'title'           => 'Произвольный HTML-код виджета',
+                'type'            => 'text',
+                'value'           => '',
+                'description'     => 'Параметр отвечает за выводимый HTML-код на странице',
+                'availableValues' => array(
+                ),
+            ),
+        )
+    ),
 );
