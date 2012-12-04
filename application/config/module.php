@@ -98,4 +98,18 @@ return array(
             )
         )
     ),
+    /**
+     * Модуль "Каталог товаров"
+     */
+    'Catalog' => array(
+        'name'  => 'Catalog',
+        'title' => 'Настройки модуля "Каталог товаров"',
+        'type'  => 'module_default',
+        'enable'      => 1,
+        'description' => 'Эта группа настроек отвечает за работу модуля "Каталог товаров"',
+        'group' => array(
+            array(
+            )
+        )
+    ),
 );
