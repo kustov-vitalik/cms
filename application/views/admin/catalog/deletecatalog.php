@@ -15,7 +15,7 @@
         <input type="submit" name="no" value="Нет" />
         <input type="submit" name="yes" value="Да" />
     </form>
-    <? if(count($error) > 0): ?>
+    <? if(count($errors) > 0): ?>
     <? foreach ($errors as $error): ?>
     <p class="notice error"><?= $error ?></p>
     <? endforeach; ?>
