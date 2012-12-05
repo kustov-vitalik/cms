@@ -125,23 +125,26 @@ class Model_Config extends ORM implements Config_Interface {
 
             $this->save();
 
-
-
-            $iterator = $config->getItems()->getIterator();
-            $iterator->rewind();
-            while ($iterator->valid())
+            if (!$config->getItems()->isEmpty())
             {
-
-                $item = $iterator->current();
-
-                if ($item instanceof Config_Item_Interface)
+                $iterator = $config->getItems()->getIterator();
+                $iterator->rewind();
+                while ($iterator->valid())
                 {
-                    $configItem = new Model_Config_Item();
-                    $item->setConfig($this);
-                    $configItem->saveConfigItem($item);
+
+                    $item = $iterator->current();
+
+                    if ($item instanceof Config_Item_Interface)
+                    {
+                        $configItem = new Model_Config_Item();
+                        $item->setConfig($this);
+                        $configItem->saveConfigItem($item);
+                    }
+                    $iterator->next();
                 }
-                $iterator->next();
             }
+
+
 
 
 

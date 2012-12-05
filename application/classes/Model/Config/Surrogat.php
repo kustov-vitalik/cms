@@ -22,7 +22,7 @@ class Model_Config_Surrogat extends Config_Empty {
                 break;
             default :
                 throw new Kohana_Exception('Entity type :type not found in system', array(
-                    ':type' => $configType
+            ':type' => $configType
                 ));
                 break;
         }
@@ -32,7 +32,7 @@ class Model_Config_Surrogat extends Config_Empty {
         if ($configGroup == NULL)
         {
             throw new Kohana_Exception('Entity :ent not found in system', array(
-                ':ent' => $configName
+        ':ent' => $configName
             ));
         }
 
@@ -46,36 +46,40 @@ class Model_Config_Surrogat extends Config_Empty {
 
         $configItemsSurrogat = CollectionFactory::create('Model_Config_Item_Surrogat');
 
-        foreach ($configItemsGroup as $item)
+        if (count($configItemsGroup) > 0)
         {
-            $configItemSurrogat = new Model_Config_Item_Surrogat();
-
-            $configItemSurrogat->setConfig($this);
-            $configItemSurrogat->setName($item['name']);
-            $configItemSurrogat->setTitle($item['title']);
-            $configItemSurrogat->setDescription($item['description']);
-            $configItemSurrogat->setValue($item['value']);
-            $configItemSurrogat->setType($item['type']);
 
 
-            $configItemsAvailableValuesSurrogat =
-                    CollectionFactory::create('Model_Config_Item_AvailableValue_Surrogat');
-
-            foreach ($item['availableValues'] as $availableValue)
+            foreach ($configItemsGroup as $item)
             {
-                $avValue = new Model_Config_Item_AvailableValue_Surrogat();
-                $avValue->setConfigItem($configItemSurrogat);
-                $avValue->setValue($availableValue['value']);
-                $configItemsAvailableValuesSurrogat->add($avValue);
+                $configItemSurrogat = new Model_Config_Item_Surrogat();
+
+                $configItemSurrogat->setConfig($this);
+                $configItemSurrogat->setName($item['name']);
+                $configItemSurrogat->setTitle($item['title']);
+                $configItemSurrogat->setDescription($item['description']);
+                $configItemSurrogat->setValue($item['value']);
+                $configItemSurrogat->setType($item['type']);
+
+
+                $configItemsAvailableValuesSurrogat =
+                        CollectionFactory::create('Model_Config_Item_AvailableValue_Surrogat');
+
+                foreach ($item['availableValues'] as $availableValue)
+                {
+                    $avValue = new Model_Config_Item_AvailableValue_Surrogat();
+                    $avValue->setConfigItem($configItemSurrogat);
+                    $avValue->setValue($availableValue['value']);
+                    $configItemsAvailableValuesSurrogat->add($avValue);
+                }
+
+                $configItemSurrogat->setAvailableValues($configItemsAvailableValuesSurrogat);
+
+                $configItemsSurrogat->add($configItemSurrogat);
             }
-
-            $configItemSurrogat->setAvailableValues($configItemsAvailableValuesSurrogat);
-
-            $configItemsSurrogat->add($configItemSurrogat);
         }
 
         $this->setItems($configItemsSurrogat);
-
     }
 
 }

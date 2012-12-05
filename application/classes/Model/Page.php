@@ -564,8 +564,24 @@ class Model_Page extends ORM {
         }
 
         $positions = $positions->find_all();
-        $widgets   = $widgets->where('widget_id', 'IN', $arrayWidgets)->find_all();
-        $configs   = $configs->where('config_id', 'IN', $arrayConfigs)->find_all();
+        if (count($arrayWidgets) > 0)
+        {
+            $widgets = $widgets->where('widget_id', 'IN', $arrayWidgets)->find_all();
+        }
+        else
+        {
+            $widgets = array();
+        }
+
+        if (count($arrayConfigs) > 0)
+        {
+            $configs = $configs->where('config_id', 'IN', $arrayConfigs)->find_all();
+        }
+        else
+        {
+            $configs = array();
+        }
+
 
 
         foreach ($map as $mapItem)

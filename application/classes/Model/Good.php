@@ -32,7 +32,7 @@ class Model_Good extends ORM_Searchable {
                 array('min_length', array(':value', 4)),
                 array('max_length', array(':value', 255)),
             ),
-            'name' => array(
+            'name'  => array(
                 array('not_empty'),
                 array('min_length', array(':value', 4)),
                 array('max_length', array(':value', 255)),
@@ -115,6 +115,28 @@ class Model_Good extends ORM_Searchable {
             }
         }
         return $this->catalog;
+    }
+
+    /**
+     * Удалить товар
+     * @return boolean
+     * @throws Exception
+     */
+    public function dropGood()
+    {
+        $this->_db->begin();
+        try
+        {
+            Search::instance()->remove($this);
+            $this->delete();
+            $this->_db->commit();
+            return TRUE;
+        }
+        catch (Exception $exc)
+        {
+            $this->_db->rollback();
+            throw $exc;
+        }
     }
 
 }

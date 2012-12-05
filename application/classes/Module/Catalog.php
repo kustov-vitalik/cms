@@ -7,4 +7,9 @@
 
 class Module_Catalog extends Model_Module {
 
+    public function render()
+    {
+        return "CATALOG";
+    }
+
 }

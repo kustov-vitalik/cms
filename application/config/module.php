@@ -108,8 +108,6 @@ return array(
         'enable'      => 1,
         'description' => 'Эта группа настроек отвечает за работу модуля "Каталог товаров"',
         'group' => array(
-            array(
-            )
         )
     ),
 );
