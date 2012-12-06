@@ -44,7 +44,7 @@
                 <li><a href="/admin/auth/logout"><span class="icon" data-icon="A"></span>Выход</a>
             </ul>
 
-            <?= Manager::Instance()->getManagerContent()->getBreadCrumbs() ?>
+            <?= $breadCrumbs ?>
 
             <?= $content ?>
 
@@ -64,7 +64,7 @@
 
         <!--        </div> END WRAP -->
 
-        <?php echo View::factory('profiler/stats') ?>
+        <?php // echo View::factory('profiler/stats') ?>
 
         <? if(Manager_Content::Instance()->isJsText()): ?>
         <script><?= Manager_Content::Instance()->getJsText() ?></script>

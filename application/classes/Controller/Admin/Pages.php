@@ -7,6 +7,14 @@
 
 class Controller_Admin_Pages extends Controller_Admin {
 
+    public function before()
+    {
+        parent::before();
+        $this->getBreadCrumbs()->addItem(
+                new BreadCrumbs_Item('Управление страницами', '/admin/pages')
+        );
+    }
+
     public function action_index()
     {
         $this->action_list();
@@ -14,22 +22,23 @@ class Controller_Admin_Pages extends Controller_Admin {
 
     public function action_list()
     {
+        $page = new Model_Page($this->request->param('id'));
 
-        $pages = ORM::factory('page')
-                ->order_by('sequence', 'ASC')
-                ->find_all();
 
-        $content = View::factory('admin/pages/list', array('pages' => $pages));
-
+        $content = View::factory('admin/pages/list', array('page' => $page));
+        $title   = "Список страниц";
         Manager::Instance()
                 ->getManagerContent()
                 ->setContent($content)
-                ->setTitle("Список страниц");
+                ->setTitle($title);
+        $this->getBreadCrumbs()->addItem(
+                new BreadCrumbs_Item($title, $this->request->url())
+        );
     }
 
     public function action_add()
     {
-
+        $parentPage = new Model_Page($this->request->param('id'));
         $errors = $data   = array();
 
         if ($this->request->method() == 'POST')
@@ -59,12 +68,16 @@ class Controller_Admin_Pages extends Controller_Admin {
         $content = View::factory('admin/pages/add')
                 ->set('errors', $errors)
                 ->set('modules', $modules)
+                ->set('parentPage', $parentPage)
                 ->set('data', $data);
-
+        $title   = 'Добавление новой страницы';
         Manager::Instance()
                 ->getManagerContent()
                 ->setContent($content)
-                ->setTitle('Добавление новой страницы');
+                ->setTitle($title);
+        $this->getBreadCrumbs()->addItem(
+                new BreadCrumbs_Item($title, $this->request->url())
+        );
     }
 
     public function action_edit()
@@ -106,16 +119,19 @@ class Controller_Admin_Pages extends Controller_Admin {
                     'data'   => $data,
                     'errors' => $errors,
                 ));
-
+        $title   = "Редактирование страницы {$page->getTitle()}";
         Manager::Instance()
                 ->getManagerContent()
                 ->setContent($content)
-                ->setTitle("Редактирование страницы {$page->getTitle()}");
+                ->setTitle($title);
+        $this->getBreadCrumbs()->addItem(
+                new BreadCrumbs_Item($title, $this->request->url())
+        );
     }
 
     public function action_delete()
     {
-
+        $page = new Model_Page($this->request->param('id'));
         $errors = array();
 
         if (isset($_POST['no']))
@@ -127,11 +143,9 @@ class Controller_Admin_Pages extends Controller_Admin {
         {
             try
             {
-
-                $page = new Model_Page($this->request->post('page_id'));
-
                 if ($page->removePage())
                 {
+
                     $this->redirect('/admin/pages');
                 }
             }
@@ -139,18 +153,25 @@ class Controller_Admin_Pages extends Controller_Admin {
             {
                 $errors = $exc->errors('models');
             }
+            catch (Exception $e)
+            {
+                throw $e;
+            }
         }
 
-        $page = ORM::factory('page', $this->request->param('id'));
+
 
         $content = View::factory('admin/pages/delete', array(
                     'page'   => $page,
                     'errors' => $errors
                 ));
-
+        $title   = "Удаление страницы '{$page->getTitle()}'";
         Manager::Instance()
                 ->getManagerContent()
                 ->setContent($content);
+        $this->getBreadCrumbs()->addItem(
+                new BreadCrumbs_Item($title, $this->request->url())
+        );
     }
 
     public function action_manage()
@@ -177,6 +198,9 @@ class Controller_Admin_Pages extends Controller_Admin {
         Manager_Content::Instance()
                 ->setContent($content)
                 ->setTitle($title);
+        $this->getBreadCrumbs()->addItem(
+                new BreadCrumbs_Item($title, $this->request->url())
+        );
     }
 
     public function action_moveUpWidget()
@@ -337,6 +361,47 @@ class Controller_Admin_Pages extends Controller_Admin {
         Manager_Content::Instance()
                 ->setContent($content)
                 ->setTitle($title);
+        $this->getBreadCrumbs()->addItem(
+                new BreadCrumbs_Item($title, $this->request->url())
+        );
+    }
+
+    public function action_createParent()
+    {
+
+        $page = new Model_Page($this->request->param('id'));
+
+        $errors = array();
+
+        if ($this->request->method() == Request::POST)
+        {
+            try
+            {
+                if ($page->createParent($this->request->post('parent_page_id')))
+                {
+                    $this->goBack();
+                }
+            }
+            catch (ORM_Validation_Exception $exc)
+            {
+                $errors = $exc->errors('models');
+            }
+        }
+
+        $pages = ORM::factory('Page')
+                ->where('page_id', '!=', $page->pk())
+                ->find_all();
+
+        $title   = "Назначить странице '{$page->getTitle()}' родительскую страницу";
+        $content = View::factory('admin/pages/createparent', array(
+                    'pages'  => $pages,
+                    'errors' => $errors,
+                    'page'   => $page
+                ));
+        Manager_Content::Instance()
+                ->setContent($content)
+                ->setTitle($title);
+        $this->getBreadCrumbs()->addItem(new BreadCrumbs_Item($title, $this->request->url()));
     }
 
 }

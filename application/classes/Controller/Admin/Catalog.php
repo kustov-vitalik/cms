@@ -7,6 +7,13 @@
 
 class Controller_Admin_Catalog extends Controller_Admin {
 
+    public function before()
+    {
+        parent::before();
+        $item = new BreadCrumbs_Item("Управление каталогами", '');
+        $this->getBreadCrumbs()->addItem($item);
+    }
+
     public function action_manage()
     {
         $page_id = $this->request->param('id');

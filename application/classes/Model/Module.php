@@ -111,12 +111,12 @@ class Model_Module extends ORM {
     protected $_sanitized_tables = array(
     );
 
-    public function sanitize()
+    public function sanitize(array $sanitizedTables)
     {
         $this->_db->begin();
         try
         {
-            foreach ($this->_sanitized_tables as $table => $model)
+            foreach ($sanitizedTables as $table => $model)
             {
                 $models = ORM::factory($model)
                         ->where('page_id', '=', $this->getPage()->pk())
@@ -128,8 +128,11 @@ class Model_Module extends ORM {
                         ->where('page_id', '=', $this->getPage()->pk())
                         ->execute();
 
-                $this->_db->commit();
+
             }
+
+            $this->_db->commit();
+            return TRUE;
         }
         catch (Kohana_Exception $exc)
         {

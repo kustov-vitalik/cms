@@ -8,6 +8,7 @@
 class Controller_Admin extends Controller_Base {
 
     public $template   = 'admin/index';
+    public $breadCrumbs;
     private $urlHistory = array(
         'preprev' => NULL,
         'prev'    => NULL,
@@ -22,6 +23,13 @@ class Controller_Admin extends Controller_Base {
             $this->redirect('/admin/auth/login');
         }
 
+
+        $this->breadCrumbs = new BreadCrumbs();
+        $this->breadCrumbs->addItem(
+                new BreadCrumbs_Item(Site::Instance()->getConfig()->get('name'), '/admin')
+        );
+
+
         $this->urlHistory = array(
             'preprev' => Session::instance()->get('backURL'),
             'prev'    => Request::current()->referrer(),
@@ -33,13 +41,23 @@ class Controller_Admin extends Controller_Base {
     public function after()
     {
         $this->template
-                ->set('content', Manager_Content::Instance()->getContent());
+                ->set('content', Manager_Content::Instance()->getContent())
+                ->set('breadCrumbs', $this->breadCrumbs);
         parent::after();
     }
 
     public function goBack()
     {
         $this->redirect($this->urlHistory['preprev']);
+    }
+
+    /**
+     * Получить объект хлебных крошек
+     * @return BreadCrumbs
+     */
+    public function getBreadCrumbs()
+    {
+        return $this->breadCrumbs;
     }
 
 }

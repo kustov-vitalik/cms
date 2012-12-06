@@ -5,7 +5,7 @@
  */
 ?>
 <? if($modules->count() > 0): ?>
-<?= Form::open('/admin/pages/add', array('method' => 'post', 'class' => 'center')); ?>
+<?= Form::open('/admin/pages/add/' . $parentPage->pk(), array('method' => 'post', 'class' => 'center')); ?>
 <?= Form::label('title', 'Заголовок страницы', array('class' => 'col_2')); ?>
 <?= Form::input('title', Arr::get($data, 'title'), array('size' => '30')); ?>
 
@@ -37,7 +37,7 @@
 <label for="in_menu">Показывать в главном меню?</label>
 
 <br/>
-
+<input type="hidden" name="parent_page_id" value="<?= $parentPage->pk() ?>" />
 <?= Form::submit('submit', 'Сохранить'); ?>
 <?= Form::close(); ?>
 

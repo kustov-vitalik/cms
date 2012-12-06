@@ -7,6 +7,15 @@
 
 class Controller_Admin_Modules extends Controller_Admin {
 
+    public function before()
+    {
+        parent::before();
+        $title = "Управления модулями системы";
+        $this->getBreadCrumbs()->addItem(
+                new BreadCrumbs_Item($title, '/admin/modules')
+        );
+    }
+
     public function action_index()
     {
         $this->action_list();
@@ -20,11 +29,14 @@ class Controller_Admin_Modules extends Controller_Admin {
         $content = View::factory('admin/modules/list', array(
                     'modules' => $modules
                 ));
-
+        $title   = 'Список модулей';
         Manager::Instance()
                 ->getManagerContent()
                 ->setContent($content)
-                ->setTitle('Список модулей');
+                ->setTitle($title);
+        $this->getBreadCrumbs()->addItem(
+                new BreadCrumbs_Item($title, $this->request->url())
+        );
     }
 
     public function action_add()
@@ -59,11 +71,14 @@ class Controller_Admin_Modules extends Controller_Admin {
                 ->set('errors', $errors)
                 ->set('modules', $modules)
                 ->set('data', $data);
-
+        $title   = 'Добавление нового модуля';
         Manager::Instance()
                 ->getManagerContent()
                 ->setContent($content)
-                ->setTitle('Добавление нового модуля');
+                ->setTitle($title);
+        $this->getBreadCrumbs()->addItem(
+                new BreadCrumbs_Item($title, $this->request->url())
+        );
     }
 
     public function action_delete()
@@ -102,10 +117,13 @@ class Controller_Admin_Modules extends Controller_Admin {
                     'errors' => $errors,
                     'pages'  => $pages,
                 ));
-
+        $title   = "Удаление модуля '{$module->getName()}'";
         Manager::Instance()
                 ->getManagerContent()
                 ->setContent($content);
+        $this->getBreadCrumbs()->addItem(
+                new BreadCrumbs_Item($title, $this->request->url())
+        );
     }
 
     public function action_edit()
@@ -138,14 +156,17 @@ class Controller_Admin_Modules extends Controller_Admin {
 
 
         $content = View::factory('admin/modules/edit', array(
-                    'data'    => $data,
-                    'errors'  => $errors,
+                    'data'   => $data,
+                    'errors' => $errors,
                 ));
-
+        $title   = "Редактирование модуля {$module->getTitle()}";
         Manager::Instance()
                 ->getManagerContent()
                 ->setContent($content)
-                ->setTitle("Редактирование модуля {$module->title}");
+                ->setTitle($title);
+        $this->getBreadCrumbs()->addItem(
+                new BreadCrumbs_Item($title, $this->request->url())
+        );
     }
 
     public function action_settings()
@@ -191,6 +212,9 @@ class Controller_Admin_Modules extends Controller_Admin {
         Manager_Content::Instance()
                 ->setContent($content)
                 ->setTitle($title);
+        $this->getBreadCrumbs()->addItem(
+                new BreadCrumbs_Item($title, $this->request->url())
+        );
     }
 
 }

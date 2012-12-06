@@ -7,10 +7,6 @@
 
 class Module_News extends Module {
 
-    protected $_sanitized_tables = array(
-        'news' => 'New'
-    );
-
     public function render()
     {
         $action = Manager_URL::Instance()->getControl();
@@ -44,7 +40,7 @@ class Module_News extends Module {
     {
 
 
-        $limit  = $this->getConfig()->getItem('limit');
+        $limit = $this->getConfig()->getItem('limit');
 
         $pageNun = Request::initial()->param('page');
 
@@ -78,6 +74,13 @@ class Module_News extends Module {
                 ));
 
         return $content->render();
+    }
+
+    public function getSanitizedTables()
+    {
+        return array(
+            'news' => 'New'
+        );
     }
 
 }

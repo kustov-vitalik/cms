@@ -74,4 +74,11 @@ class Module_Feedback extends Module {
         return $view->render();
     }
 
+    public function getSanitizedTables()
+    {
+        return array(
+            'feedbacks' => 'Feedback'
+        );
+    }
+
 }

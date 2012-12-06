@@ -13,20 +13,25 @@ class Model_Page extends ORM {
     protected $_table_name    = 'pages';
     protected $_primary_key   = 'page_id';
     protected $_table_columns = array(
-        'page_id'   => NULL,
-        'title'     => NULL,
-        'url'       => NULL,
-        'in_menu'   => NULL,
-        'sequence'  => NULL,
-        'module_id' => NULL,
-        'config_id' => NULL,
+        'page_id'        => NULL,
+        'title'          => NULL,
+        'url'            => NULL,
+        'in_menu'        => NULL,
+        'sequence'       => NULL,
+        'module_id'      => NULL,
+        'config_id'      => NULL,
+        'parent_page_id' => NULL,
     );
     protected $_has_many      = array(
-        'widgetsModel' => array(
+        'widgetsModel'       => array(
             'model'       => 'Widget',
             'foreign_key' => 'page_id',
             'through'     => 'page_widget',
             "far_key"     => "widget_id"
+        ),
+        'childrenPagesModel' => array(
+            'model'       => 'Page',
+            'foreign_key' => 'parent_page_id',
         ),
     );
     protected $_belongs_to    = array(
@@ -91,6 +96,44 @@ class Model_Page extends ORM {
         return ($this->get('in_menu') == 1) ? TRUE : FALSE;
     }
 
+    protected $childrenPages;
+
+    /**
+     * Получить коллекцию вложенных страниц
+     * @return Collection
+     */
+    public function getChildrenPages()
+    {
+        if ($this->childrenPages == NULL)
+        {
+            $this->childrenPages = CollectionFactory::create('Model_Page');
+            $cPages              = $this->childrenPagesModel
+                    ->order_by('sequence', 'ASC')
+                    ->find_all();
+
+            foreach ($cPages as $page)
+            {
+                $this->childrenPages->add($page);
+            }
+        }
+        return $this->childrenPages;
+    }
+
+    protected $parentPage;
+
+    /**
+     * Получить родительскую страницу
+     * @return Model_Page
+     */
+    public function getParentPage()
+    {
+        if ($this->parentPage == NULL)
+        {
+            $this->parentPage = new Model_Page($this->parent_page_id);
+        }
+        return $this->parentPage;
+    }
+
     /**
      * МАНИПУЛЯЦИИ СТРАНИЦЕЙ
      */
@@ -126,6 +169,12 @@ class Model_Page extends ORM {
 
             $this->values($data);
             $this->in_menu = isset($data['in_menu']) ? 1 : 0;
+
+            if ($this->parent_page_id == NULL)
+            {
+                $this->parent_page_id = NULL;
+            }
+
             $this->save();
 
             $this->_db->commit();
@@ -157,6 +206,12 @@ class Model_Page extends ORM {
             $data['sequence']  = $this->getNextSequence();
             $this->values($data);
             $this->in_menu     = isset($data['in_menu']) ? 1 : 0;
+
+            if ($this->parent_page_id == NULL)
+            {
+                $this->parent_page_id = NULL;
+            }
+
             $this->save();
 
 
@@ -175,6 +230,7 @@ class Model_Page extends ORM {
     {
         $pos = DB::select(array(DB::expr('MAX(sequence)'), 'max'))
                 ->from('pages')
+                ->where('parent_page_id', '=', $this->parent_page_id)
                 ->limit(1)
                 ->execute();
         return $pos[0]['max'] + 1;
@@ -231,6 +287,7 @@ class Model_Page extends ORM {
                 /* @var $page Model_Page */
                 $page = ORM::factory('page')
                         ->where('sequence', '>', $this->getSequence())
+                        ->and_where('parent_page_id', '=', $this->parent_page_id)
                         ->order_by('sequence', 'ASC')
                         ->limit(1)
                         ->find();
@@ -283,6 +340,7 @@ class Model_Page extends ORM {
                 /* @var $page Model_Page */
                 $page = ORM::factory('page')
                         ->where('sequence', '<', $this->getSequence())
+                        ->and_where('parent_page_id', '=', $this->parent_page_id)
                         ->order_by('sequence', 'DESC')
                         ->limit(1)
                         ->find();
@@ -318,7 +376,7 @@ class Model_Page extends ORM {
 
     /**
      * Установить показ/непоказ ссылки на страницу в главном меню
-     * @param string $status
+     * @param string $status (on||off)
      * @return boolean
      * @throws kohana_Exception
      */
@@ -348,6 +406,28 @@ class Model_Page extends ORM {
             $this->_db->rollback();
             throw $exc;
             return FALSE;
+        }
+    }
+
+    public function createParent($page_id)
+    {
+        $this->_db->begin();
+
+        try
+        {
+            if ($page_id == NULL)
+            {
+                $page_id = NULL;
+            }
+            $this->parent_page_id = $page_id;
+            $this->save();
+            $this->_db->commit();
+            return TRUE;
+        }
+        catch (Exception $exc)
+        {
+            $this->_db->rollback();
+            throw $exc;
         }
     }
 
@@ -382,7 +462,6 @@ class Model_Page extends ORM {
             {
                 $this->module = new Module_Error404();
             }
-
         }
 
 

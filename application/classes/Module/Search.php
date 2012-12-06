@@ -37,4 +37,9 @@ class Module_Search extends Module {
         return $content->render();
     }
 
+    public function getSanitizedTables()
+    {
+
+    }
+
 }

@@ -18,7 +18,7 @@
         <? if(Arr::get($errors, 'title') != NULL): ?>
         <label for="error" class="notice error"><?= Arr::get($errors, 'title') ?></label>
         <? endif; ?>
-
+        <input type="hidden" name="page_id" value="<?= $page->pk() ?>" />
         <input type="submit" value="Сохранить" />
     </form>
 </fieldset>

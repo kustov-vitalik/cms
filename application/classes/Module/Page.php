@@ -7,10 +7,6 @@
 
 class Module_Page extends Module {
 
-    protected $_sanitized_tables = array(
-        'pages_pages' => 'Pages_Page'
-    );
-
     public function render()
     {
 
@@ -27,6 +23,13 @@ class Module_Page extends Module {
                 ));
 
         return $content->render();
+    }
+
+    public function getSanitizedTables()
+    {
+        return array(
+            'pages_pages' => 'Pages_Page'
+        );
     }
 
 }

@@ -47,7 +47,6 @@ class Manager_PageMap {
 
             $this->structure[$positionName] = $view->render();
         }
-
     }
 
     private function __clone()

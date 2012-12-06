@@ -15,6 +15,7 @@ class Model_Good extends ORM_Searchable {
         'title'      => NULL,
         'catalog_id' => NULL,
         'sequence'   => NULL,
+        'page_id'    => NULL,
     );
     protected $_has_many      = array(
     );
@@ -22,6 +23,10 @@ class Model_Good extends ORM_Searchable {
         'catalogModel' => array(
             'model'       => 'Catalog',
             'foreign_key' => 'catalog_id',
+        ),
+        'pageModel' => array(
+            'model'       => 'Page',
+            'foreign_key' => 'page_id',
         ),
     );
 

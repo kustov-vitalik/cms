@@ -48,4 +48,9 @@ class Module_Auth extends Module {
 
     }
 
+    public function getSanitizedTables()
+    {
+
+    }
+
 }
