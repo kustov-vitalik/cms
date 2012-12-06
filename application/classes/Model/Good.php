@@ -14,6 +14,7 @@ class Model_Good extends ORM_Searchable {
         'name'       => NULL,
         'title'      => NULL,
         'catalog_id' => NULL,
+        'sequence'   => NULL,
     );
     protected $_has_many      = array(
     );
@@ -95,6 +96,25 @@ class Model_Good extends ORM_Searchable {
         return $this->set('name', $name);
     }
 
+    /**
+     * Получить порядок
+     * @return int
+     */
+    public function getSequence()
+    {
+        return $this->get('sequence');
+    }
+
+    /**
+     * Установить порядок
+     * @param int $sequence
+     * @return Model_Good
+     */
+    public function setSequence($sequence)
+    {
+        return $this->set('sequence', $sequence);
+    }
+
     private $catalog;
 
     /**
@@ -129,6 +149,131 @@ class Model_Good extends ORM_Searchable {
         {
             Search::instance()->remove($this);
             $this->delete();
+            $this->_db->commit();
+            return TRUE;
+        }
+        catch (Exception $exc)
+        {
+            $this->_db->rollback();
+            throw $exc;
+        }
+    }
+
+    public function createGood(array $data)
+    {
+        $this->_db->begin();
+        try
+        {
+            $this->values($data);
+            $this->setName(Text::translitForURL($this->getTitle()));
+            $this->setSequence($this->getNextSequence());
+
+            if ($this->catalog_id == NULL)
+            {
+                $this->catalog_id = NULL;
+            }
+
+            $this->save();
+
+            Search::instance()->add($this);
+
+            $this->_db->commit();
+            return TRUE;
+        }
+        catch (Exception $exc)
+        {
+            $this->_db->rollback();
+            throw $exc;
+        }
+    }
+
+    public function saveGood(array $data)
+    {
+        $this->_db->begin();
+        try
+        {
+            $this->values($data);
+            $this->setName(Text::translitForURL($this->getTitle()));
+            $this->save();
+
+            Search::instance()->update($this);
+
+            $this->_db->commit();
+            return TRUE;
+        }
+        catch (Exception $exc)
+        {
+            $this->_db->rollback();
+            throw $exc;
+        }
+    }
+
+    public function moveUp()
+    {
+        if ($this->move('up'))
+        {
+            return TRUE;
+        }
+    }
+
+    public function moveDown()
+    {
+        if ($this->move('down'))
+        {
+            return TRUE;
+        }
+    }
+
+    public function getNextSequence()
+    {
+        $seq = DB::select(array(DB::expr('MAX(sequence)'), 'max'))
+                ->from($this->_table_name)
+                ->where('catalog_id', '=', $this->catalog_id)
+                ->execute();
+        return $seq[0]['max'] + 1;
+    }
+
+    private function move($status = 'up')
+    {
+        $this->_db->begin();
+        try
+        {
+            $params = array();
+            switch ($status)
+            {
+                case 'up':
+                    $params = array(
+                        'operator' => '<',
+                        'order'    => 'DESC'
+                    );
+                    break;
+                case 'down':
+                    $params = array(
+                        'operator' => '>',
+                        'order'    => 'ASC'
+                    );
+                    break;
+            }
+
+            $otherGood = ORM::factory('Good')
+                    ->where('catalog_id', '=', $this->catalog_id)
+                    ->and_where('sequence', $params['operator'], $this->getSequence())
+                    ->order_by('sequence', $params['order'])
+                    ->limit(1)
+                    ->find();
+
+            if (!$otherGood->loaded())
+            {
+                throw new Kohana_Exception('Товар не может быть перемещен');
+            }
+
+            $tempSeq = $this->getSequence();
+            $this->setSequence($otherGood->getSequence());
+            $otherGood->setSequence($tempSeq);
+
+            $otherGood->save();
+            $this->save();
+
             $this->_db->commit();
             return TRUE;
         }

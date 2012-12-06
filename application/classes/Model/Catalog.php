@@ -182,7 +182,7 @@ class Model_Catalog extends ORM_Searchable {
         {
             $this->goods = CollectionFactory::create('Model_Good');
 
-            $goods = $this->goodsModel->find_all();
+            $goods = $this->goodsModel->order_by('sequence', 'ASC')->find_all();
             foreach ($goods as $good)
             {
                 $this->goods->add($good);

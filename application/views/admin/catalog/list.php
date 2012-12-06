@@ -11,6 +11,12 @@
 /* @var $good Model_Good */
 ?>
 <fieldset>
+    <legend>Управление каталогами/товарами</legend>
+<? if($currentCatalog->loaded()): ?>
+<a href="/admin/catalog/list/<?= $page->pk() ?>:<?= $currentCatalog->getParentCatalog()->pk() ?>"><button><-- Назад</button></a>
+<? endif; ?>
+
+<fieldset>
     <legend>Каталоги</legend>
     <? if (!$catalogs->isEmpty()): ?>
 
@@ -34,7 +40,7 @@
                         <td><?= $catalog->pk() ?></td>
                         <td>
                             <a href="/admin/catalog/list/<?= $page->pk() ?>:<?= $catalog->pk() ?>">
-                                <?= $catalog->getTitle() ?>
+                                <?= $catalog->getTitle() ?> (Товаров: <?= $catalog->getGoods()->count() ?>, Подкаталогов: <?= $catalog->getChildrenCatalogs()->count() ?>)
                             </a>
                         </td>
                         <td><?= $catalog->getName() ?></td>
@@ -105,3 +111,5 @@
     <li><a href="/admin/catalog/addCatalog/<?= $page->pk() ?>:<?= $currentCatalog->pk() ?>"><span class="icon large blue tooltip" title="Добавить каталог" data-icon="+"></span>Добавить каталог</a></li>
     <li><a href="/admin/catalog/addGood/<?= $page->pk() ?>:<?= $currentCatalog->pk() ?>"><span class="icon large blue tooltip" title="Добавить товар" data-icon="+"></span>Добавить товар</a></li>
 </ul>
+
+</fieldset>

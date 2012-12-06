@@ -170,13 +170,12 @@ class Controller_Admin_Catalog extends Controller_Admin {
         if ($currentCatalog->moveUpCatalog())
         {
             $this->redirect('/admin/catalog/list/' . $page->pk()
-                                . ':' . $currentCatalog->getParentCatalog()->pk());
+                    . ':' . $currentCatalog->getParentCatalog()->pk());
         }
         else
         {
             throw new Kohana_Exception("Невозможно переместить каталог");
         }
-
     }
 
     public function action_moveDownCatalog()
@@ -188,11 +187,144 @@ class Controller_Admin_Catalog extends Controller_Admin {
         if ($currentCatalog->moveDownCatalog())
         {
             $this->redirect('/admin/catalog/list/' . $page->pk()
-                                . ':' . $currentCatalog->getParentCatalog()->pk());
+                    . ':' . $currentCatalog->getParentCatalog()->pk());
         }
         else
         {
             throw new Kohana_Exception("Невозможно переместить каталог");
+        }
+    }
+
+    public function action_addGood()
+    {
+        /* @var $page Model_Page */
+        /* @var $currentCatalog Model_Catalog */
+        list($page, $currentCatalog) = $this->initPageCatalog();
+
+        $data   = $errors = array();
+
+        if ($this->request->method() == Request::POST)
+        {
+            $data = $this->request->post();
+            $good = new Model_Good();
+
+            try
+            {
+                if ($good->createGood($data))
+                {
+                    $this->redirect('/admin/catalog/list/' . $page->pk() . ':' . $currentCatalog->pk());
+                }
+            }
+            catch (ORM_Validation_Exception $exc)
+            {
+                $errors = $exc->errors('models');
+            }
+        }
+
+
+        $title = "Добавление товара в каталог '{$currentCatalog->getTitle()}'";
+
+        $content = View::factory('admin/catalog/addgood', array(
+                    'currentCatalog' => $currentCatalog,
+                    'errors'         => $errors,
+                    'data'           => $data,
+                    'page'           => $page
+                ));
+
+        Manager_Content::Instance()
+                ->setContent($content)
+                ->setTitle($title);
+    }
+
+    public function action_editGood()
+    {
+        $good   = new Model_Good($this->request->param('id'));
+        $errors = $data   = array();
+
+        if ($this->request->method() == Request::POST)
+        {
+            $data = $this->request->post();
+
+            try
+            {
+                if ($good->saveGood($data))
+                {
+                    $this->redirect('/admin/catalog/list/' . $good->getCatalog()->getPage()->pk()
+                            . ':' . $good->getCatalog()->pk());
+                }
+            }
+            catch (ORM_Validation_Exception $exc)
+            {
+                $errors = $exc->errors('models');
+            }
+        }
+
+
+        $title   = "Редактирование товара '{$good->getTitle()}'";
+        $content = View::factory('admin/catalog/editgood', array(
+                    'good'   => $good,
+                    'errors' => $errors
+                ));
+        Manager_Content::Instance()
+                ->setContent($content)
+                ->setTitle($title);
+    }
+
+    public function action_deleteGood()
+    {
+        $good   = new Model_Good($this->request->param('id'));
+        $errors = array();
+
+        if ($this->request->method() == Request::POST)
+        {
+            if (isset($_POST['no']))
+            {
+                $this->goBack();
+            }
+
+            if (isset($_POST['yes']))
+            {
+                try
+                {
+                    if ($good->dropGood())
+                    {
+                        $this->goBack();
+                    }
+                }
+                catch (ORM_Validation_Exception $exc)
+                {
+                    $errors = $exc->errors('models');
+                }
+            }
+        }
+
+        $title   = "Удаление товара '{$good->getTitle()}'";
+        $content = View::factory('admin/catalog/deletegood', array(
+                    'good'   => $good,
+                    'errors' => $errors
+                ));
+        Manager_Content::Instance()
+                ->setContent($content)
+                ->setTitle($title);
+    }
+
+    public function action_moveUpGood()
+    {
+        $good = new Model_Good($this->request->param('id'));
+
+        if ($good->moveUp())
+        {
+            $this->redirect($this->request->referrer());
+        }
+    }
+
+    public function action_moveDownGood()
+    {
+        $good = new Model_Good($this->request->param('id'));
+
+        if ($good->moveDown())
+        {
+            $this->redirect($this->request->referrer());
         }
     }
 

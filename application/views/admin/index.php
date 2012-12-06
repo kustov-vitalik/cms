@@ -64,7 +64,7 @@
 
         <!--        </div> END WRAP -->
 
-        <?php //echo View::factory('profiler/stats') ?>
+        <?php echo View::factory('profiler/stats') ?>
 
         <? if(Manager_Content::Instance()->isJsText()): ?>
         <script><?= Manager_Content::Instance()->getJsText() ?></script>
