@@ -12,7 +12,7 @@ class Controller_Widget_Search extends Controller_Widget
     public function action_index()
     {
 
-        $module = new Module_Search(array('name' => 'Search'));
+        $module = Module::factory(new Model_Module(array('name' => 'Search')));
 
         $this->template->page = $module->getPage();
         $this->template->button_enable = $this->getParameterByName('button_enable');

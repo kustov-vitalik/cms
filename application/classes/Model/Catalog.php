@@ -15,6 +15,7 @@ class Model_Catalog extends ORM_Searchable {
         'title'             => NULL,
         'parent_catalog_id' => NULL,
         'page_id'           => NULL,
+        'sequence'          => NULL,
     );
     protected $_has_many      = array(
         'childrenCatalogsModel' => array(
@@ -60,7 +61,7 @@ class Model_Catalog extends ORM_Searchable {
     {
         $fields = array();
 
-        $fields[] = new Search_Field('good_id', Searchable::UNINDEXED);
+        $fields[] = new Search_Field('catalog_id', Searchable::UNINDEXED);
         $fields[] = new Search_Field('title', Searchable::KEYWORD);
 
         return $fields;
@@ -106,6 +107,25 @@ class Model_Catalog extends ORM_Searchable {
     public function setName($name)
     {
         return $this->set('name', $name);
+    }
+
+    /**
+     * Получить порядок каталога
+     * @return int
+     */
+    public function getSequence()
+    {
+        return $this->get('sequence');
+    }
+
+    /**
+     * Установить порядок
+     * @param int $sequence
+     * @return Model_Catalog
+     */
+    public function setSequence($sequence)
+    {
+        return $this->set('sequence', $sequence);
     }
 
     private $childrenCatalogs;
@@ -216,7 +236,7 @@ class Model_Catalog extends ORM_Searchable {
             $cats = $cats->and_where('parent_catalog_id', '=', $catalog_id);
         }
 
-        $cats = $cats->find_all();
+        $cats = $cats->order_by('sequence', 'ASC')->find_all();
 
         foreach ($cats as $cat)
         {
@@ -244,6 +264,7 @@ class Model_Catalog extends ORM_Searchable {
             {
                 $catalog->parent_catalog_id = NULL;
             }
+            $catalog->setSequence($catalog->getNextSequence());
             $catalog->save();
             Search::instance()->add($catalog);
             $this->_db->commit();
@@ -282,6 +303,23 @@ class Model_Catalog extends ORM_Searchable {
         }
     }
 
+    private function getNextSequence()
+    {
+
+        $seq = DB::select(array(DB::expr('MAX(sequence)'), 'max'))
+                ->from($this->_table_name)
+                ->where('page_id', '=', $this->page_id)
+                ->and_where('parent_catalog_id', '=', $this->parent_catalog_id)
+                ->execute();
+
+        return $seq[0]['max'] + 1;
+    }
+
+    /**
+     * Удалить каталог рекурсивно со всеми вложенными каталогами/товарами
+     * @return boolean
+     * @throws Exception
+     */
     public function deleteCatalog()
     {
         $this->_db->begin();
@@ -300,6 +338,11 @@ class Model_Catalog extends ORM_Searchable {
         }
     }
 
+    /**
+     * Удалить текущий каталог
+     * @return boolean
+     * @throws Exception
+     */
     public function dropCatalog()
     {
         $this->_db->begin();
@@ -317,5 +360,79 @@ class Model_Catalog extends ORM_Searchable {
             throw $exc;
         }
     }
+
+    public function moveUpCatalog()
+    {
+        $this->_db->begin();
+        try
+        {
+            $topCatalog = ORM::factory('Catalog')
+                    ->where('parent_catalog_id', '=', $this->parent_catalog_id)
+                    ->and_where('page_id', '=', $this->page_id)
+                    ->and_where('sequence', '<', $this->getSequence())
+                    ->order_by('sequence', 'DESC')
+                    ->limit(1)
+                    ->find();
+
+            if (!$topCatalog->loaded())
+            {
+                throw new Kohana_Exception("Каталог не может быть перемещен");
+            }
+
+            $tempSeq = $this->getSequence();
+            $this->setSequence($topCatalog->getSequence());
+            $topCatalog->setSequence($tempSeq);
+
+            $this->save();
+            $topCatalog->save();
+
+
+            $this->_db->commit();
+            return TRUE;
+        }
+        catch (Exception $exc)
+        {
+            $this->_db->rollback();
+            throw $exc;
+        }
+    }
+
+    public function moveDownCatalog()
+    {
+        $this->_db->begin();
+        try
+        {
+            $topCatalog = ORM::factory('Catalog')
+                    ->where('parent_catalog_id', '=', $this->parent_catalog_id)
+                    ->and_where('page_id', '=', $this->page_id)
+                    ->and_where('sequence', '>', $this->getSequence())
+                    ->order_by('sequence', 'ASC')
+                    ->limit(1)
+                    ->find();
+
+
+            if (!$topCatalog->loaded())
+            {
+                throw new Kohana_Exception("Каталог не может быть перемещен");
+            }
+
+            $tempSeq = $this->getSequence();
+            $this->setSequence($topCatalog->getSequence());
+            $topCatalog->setSequence($tempSeq);
+
+            $this->save();
+            $topCatalog->save();
+
+
+            $this->_db->commit();
+            return TRUE;
+        }
+        catch (Exception $exc)
+        {
+            $this->_db->rollback();
+            throw $exc;
+        }
+    }
+
 
 }

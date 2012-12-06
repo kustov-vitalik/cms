@@ -35,7 +35,7 @@
 
             </td>
             <td><?= $page->url ?></td>
-            <td><?= $page->getModule()->title ?></td>
+            <td><?= $page->getModule()->getTitle() ?></td>
             <td>
                 <ul class="button-bar">
                     <? if ($page->inMenu()): ?>

@@ -81,6 +81,11 @@ class Model_Page extends ORM {
         return $this->get('sequence');
     }
 
+    public function getModelModuleID()
+    {
+        return $this->get('module_id');
+    }
+
     public function inMenu()
     {
         return ($this->get('in_menu') == 1) ? TRUE : FALSE;
@@ -353,7 +358,7 @@ class Model_Page extends ORM {
 
     /**
      * Получить модуль для страницы
-     * @return Model_Module
+     * @return Module
      */
     public function getModule()
     {
@@ -369,14 +374,15 @@ class Model_Page extends ORM {
                     throw new Kohana_Exception('Модуль не найден!');
                 }
 
-                $this->module = new $modName($module->pk());
+                $module->registerPage($this);
+
+                $this->module = Module::factory($module);
             }
             catch (Kohana_Exception $exc)
             {
                 $this->module = new Module_Error404();
             }
 
-            $this->module->registerPage($this);
         }
 
 

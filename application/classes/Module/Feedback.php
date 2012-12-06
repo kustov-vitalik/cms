@@ -5,7 +5,7 @@
  * and open the template in the editor.
  */
 
-class Module_Feedback extends Model_Module {
+class Module_Feedback extends Module {
 
     public function render()
     {

@@ -161,6 +161,41 @@ class Controller_Admin_Catalog extends Controller_Admin {
         Manager_Content::Instance()->setContent($content)->setTitle($title);
     }
 
+    public function action_moveUpCatalog()
+    {
+        /* @var $page Model_Page */
+        /* @var $currentCatalog Model_Catalog */
+        list($page, $currentCatalog) = $this->initPageCatalog();
+
+        if ($currentCatalog->moveUpCatalog())
+        {
+            $this->redirect('/admin/catalog/list/' . $page->pk()
+                                . ':' . $currentCatalog->getParentCatalog()->pk());
+        }
+        else
+        {
+            throw new Kohana_Exception("Невозможно переместить каталог");
+        }
+
+    }
+
+    public function action_moveDownCatalog()
+    {
+        /* @var $page Model_Page */
+        /* @var $currentCatalog Model_Catalog */
+        list($page, $currentCatalog) = $this->initPageCatalog();
+
+        if ($currentCatalog->moveDownCatalog())
+        {
+            $this->redirect('/admin/catalog/list/' . $page->pk()
+                                . ':' . $currentCatalog->getParentCatalog()->pk());
+        }
+        else
+        {
+            throw new Kohana_Exception("Невозможно переместить каталог");
+        }
+    }
+
     /**
      * Использовать так:
      * <pre>

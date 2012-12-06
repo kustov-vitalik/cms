@@ -5,7 +5,7 @@
  * and open the template in the editor.
  */
 
-class Module_News extends Model_Module {
+class Module_News extends Module {
 
     protected $_sanitized_tables = array(
         'news' => 'New'

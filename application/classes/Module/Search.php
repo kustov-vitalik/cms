@@ -5,7 +5,7 @@
  * and open the template in the editor.
  */
 
-class Module_Search extends Model_Module {
+class Module_Search extends Module {
 
     public function render()
     {
@@ -14,8 +14,6 @@ class Module_Search extends Model_Module {
 
         if ($query !== NULL)
         {
-
-            //$query = Zend_Search_Lucene_Search_QueryParser::parse($query);
 
             $hits = Search::instance()->find($query);
 

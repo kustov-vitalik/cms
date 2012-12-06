@@ -5,7 +5,7 @@
  * and open the template in the editor.
  */
 
-class Module_Page extends Model_Module {
+class Module_Page extends Module {
 
     protected $_sanitized_tables = array(
         'pages_pages' => 'Pages_Page'
@@ -14,7 +14,7 @@ class Module_Page extends Model_Module {
     public function render()
     {
 
-        $this->getConfig()->getItems();
+        //$this->getConfig()->getItems();
 
 
         $page = ORM::factory('pages_page', array(

@@ -5,7 +5,7 @@
  * and open the template in the editor.
  */
 
-class Module_Auth extends Model_Module {
+class Module_Auth extends Module {
 
     public function render()
     {
