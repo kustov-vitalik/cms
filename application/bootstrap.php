@@ -66,10 +66,7 @@ ini_set('unserialize_callback_func', 'spl_autoload_call');
  * Set the default language
  */
 I18n::lang('ru-ru');
-
-/**
- * Set Cookie::$salt
- */
+Session::$default = 'cookie';
 Cookie::$salt = '7wdjkri5j';
 
 /**
@@ -124,15 +121,16 @@ Kohana::$config->attach(new Config_File);
  * Enable modules. Modules are referenced by a relative or absolute path.
  */
 Kohana::modules(array(
+    'events'          => MODPATH . 'events', // Kohana events
     'auth'            => MODPATH . 'auth', // Basic authentication
     'cache'           => MODPATH . 'cache', // Caching with multiple backends
     // 'codebench'  => MODPATH.'codebench',  // Benchmarking tool
     'database-addon'  => MODPATH . 'database-addon', // Database access
     'database'        => MODPATH . 'database', // Database access
-    'image'           => MODPATH . 'image', // Image manipulation
+    //'image'           => MODPATH . 'image', // Image manipulation
     // 'minion'     => MODPATH.'minion',     // CLI Tasks
     'orm'             => MODPATH . 'orm', // Object Relationship Mapping
-    // 'unittest'   => MODPATH.'unittest',   // Unit testing
+    // 'unittest'        => MODPATH . 'unittest', // Unit testing
     'userguide'       => MODPATH . 'userguide', // User guide and API documentation
     //'calendar'  => MODPATH.'calendar',  // User guide and API documentation
     //'captcha'  => MODPATH.'captcha',  // User guide and API documentation
@@ -170,12 +168,11 @@ Route::set('admin', 'admin(/<controller>(/<action>(/<id>)))', array(
 
 
 
-Route::set('default', '(<mod>(/<control>(/<act>(/<param>))))(/page/<page>)', array(
+Route::set('default', '(<mod>(/<control>(/<act>(/<param>))))', array(
             'page' => '[0-9]+'
         ))
         ->defaults(array(
             'controller' => 'base',
             'action'     => 'index',
             'mod'        => 'home',
-            'page'       => 1
         ));

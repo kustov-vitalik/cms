@@ -18,15 +18,8 @@ class Site {
         $this->config = Kohana::$config->load('site');
 
         $url = Manager_URL::Instance()->getPageURL();
-
-
         $this->currentPage = new Model_Page(array('url' => $url));
-        $this->getCurrentPage()->setThisCurrent();
-
-        $this->getCurrentPage()->optimize();
-
-        //$this->test_Module();
-
+        $this->currentPage->setThisCurrent()->optimize();
 
     }
 
@@ -91,18 +84,6 @@ class Site {
     public function getConfig()
     {
         return $this->config;
-    }
-
-    private function test_Module()
-    {
-        $data = array(
-            'name'  => 'News',
-            'title' => 'Публикации'
-        );
-
-        $module = new Model_Module();
-        $module->saveModule($data);
-
     }
 
 }
