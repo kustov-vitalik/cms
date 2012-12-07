@@ -10,8 +10,12 @@ class Controller_Admin_Auth extends Controller {
     public function action_login()
     {
 
+        //$this->newUser('atzal1k4', '7wdjkri5j', 'ATzal1k4@mail.ru');
 
-        if (Auth::Instance()->logged_in('admin'))
+
+        Zend_Debug::dump($_REQUEST);
+
+        if (Auth::instance()->logged_in('admin'))
         {
             $this->request->redirect('/admin');
         }
@@ -29,7 +33,7 @@ class Controller_Admin_Auth extends Controller {
                     (bool) $this->request->post('remember') :
                     FALSE;
 
-            if (Auth::Instance()->login($username, $password, $remember))
+            if (Auth::instance()->login($username, $password, $remember))
             {
                 $_SESSION['KCFINDER']             = array();
                 $_SESSION['KCFINDER']['disabled'] = false;

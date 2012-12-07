@@ -44,6 +44,14 @@ class Module_News extends Module {
 
         $pageNun = Request::initial()->param('page');
 
+        //$offset  = $limit * ($pageNun - 1);
+
+        $news = ORM::factory('new')
+                ->where('page_id', '=', $this->getPage()->pk())
+                ->order_by('new_id', 'DESC')
+                //->limit($limit)
+                //->offset($offset)
+                ->find_all();
 
         $news_count = ORM::factory('new')
                 ->where('page_id', '=', $this->getPage()->pk())
@@ -51,15 +59,12 @@ class Module_News extends Module {
 
         $pagination = Pagination::factory(array(
                     'total_items'       => $news_count,
+                    //'items_per_page'    => $limit,
+                    'view'              => 'pagination/basic',
+                    'auto_hide'         => FALSE,
+                    'first_page_in_url' => FALSE,
                 ));
 
-
-        $news = ORM::factory('new')
-                ->where('page_id', '=', $this->getPage()->pk())
-                ->order_by('new_id', 'DESC')
-                ->limit($pagination->items_per_page)
-                ->offset($pagination->offset)
-                ->find_all();
 
 
         $content = View::factory('public/news/list', array(

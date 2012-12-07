@@ -34,13 +34,6 @@ class Model_Catalog extends ORM_Searchable {
         ),
     );
 
-    public function __construct($id = NULL)
-    {
-        parent::__construct($id);
-        $this->attach(new Model_Catalog_Observer());
-        $this->notify();
-    }
-
     public function rules()
     {
         return array(

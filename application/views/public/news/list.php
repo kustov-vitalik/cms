@@ -37,7 +37,7 @@
         <?= $new->announce ?>
     </p>
 
-    <a class="readmore" href="/<?= $module->getPage()->getURL() ?>/show/<?= $new->pk() ?>"><button class="small">Подробнее...</button></a>
+    <a class="readmore" href="/<?= $module->getPage()->url ?>/show/<?= $new->pk() ?>"><button class="small">Подробнее...</button></a>
 
 </article>
 <? endforeach; ?>
