@@ -108,7 +108,7 @@ return array(
             ),
         )
     ),
-    'ArbiraryCode'   => array(
+    'ArbitraryCode'   => array(
         'name'            => 'ArbiraryCode',
         'title'           => 'Виджет произвольного кода',
         'type'            => 'page_widget',
