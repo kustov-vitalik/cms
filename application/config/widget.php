@@ -109,11 +109,11 @@ return array(
         )
     ),
     'ArbitraryCode'   => array(
-        'name'            => 'ArbiraryCode',
+        'name'            => 'ArbitraryCode',
         'title'           => 'Виджет произвольного кода',
         'type'            => 'page_widget',
         'enable'          => 1,
-        'description'     => 'Настройки для виджета "ArbiraryCode" - виджета произвольного кода',
+        'description'     => 'Настройки для виджета "ArbitraryCode" - виджета произвольного кода',
         'defaultPosition' => 'left',
         'group'           => array(
             array(
