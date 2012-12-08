@@ -33,7 +33,14 @@ class Kohana_EventManager {
      */
     public static function run($name)
     {
-        self::get($name)->notify();
+        try
+        {
+            self::get($name)->notify();
+        }
+        catch (Event_NotFoundException $exc)
+        {
+            Kohana::$log->add(Log::NOTICE, $exc->getMessage());
+        }
     }
 
     /**

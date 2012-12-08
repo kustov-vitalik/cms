@@ -74,13 +74,8 @@ class Model_New extends ORM_Searchable {
 
         try
         {
-
-            $is_new = ($this->loaded()) ? FALSE : TRUE;
-
             $this->values($data);
             $this->save();
-            $is_new ? Search::instance()->add($this) : Search::instance()->update($this);
-
             $this->_db->commit();
             return TRUE;
         }
@@ -98,7 +93,6 @@ class Model_New extends ORM_Searchable {
 
         try
         {
-            Search::instance()->remove($this);
             $this->delete();
             $this->_db->commit();
             return TRUE;

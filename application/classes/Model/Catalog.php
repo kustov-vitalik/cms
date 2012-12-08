@@ -37,8 +37,6 @@ class Model_Catalog extends ORM_Searchable {
     public function __construct($id = NULL)
     {
         parent::__construct($id);
-        $this->attach(new Model_Catalog_Observer());
-        $this->notify();
     }
 
     public function rules()
@@ -277,7 +275,6 @@ class Model_Catalog extends ORM_Searchable {
             }
             $catalog->setSequence($catalog->getNextSequence());
             $catalog->save();
-            Search::instance()->add($catalog);
             $this->_db->commit();
             return TRUE;
         }
@@ -303,7 +300,6 @@ class Model_Catalog extends ORM_Searchable {
             $this->setName(Text::translitForURL($this->getTitle()));
 
             $this->save();
-            Search::instance()->update($this);
             $this->_db->commit();
             return TRUE;
         }
@@ -360,7 +356,6 @@ class Model_Catalog extends ORM_Searchable {
 
         try
         {
-            Search::instance()->remove($this);
             $this->delete();
             $this->_db->commit();
             return TRUE;

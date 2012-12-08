@@ -62,15 +62,11 @@ class Model_Pages_Page extends ORM_Searchable {
     public function savePage(array $data)
     {
         $this->_db->begin();
-
-
         try
         {
 
-            $new = ($this->loaded()) ? FALSE : TRUE;
             $this->values($data);
             $this->save();
-            $new ? Search::instance()->add($this) : Search::instance()->update($this);
 
             $this->_db->commit();
             return TRUE;

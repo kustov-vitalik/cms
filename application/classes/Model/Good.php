@@ -152,7 +152,6 @@ class Model_Good extends ORM_Searchable {
         $this->_db->begin();
         try
         {
-            Search::instance()->remove($this);
             $this->delete();
             $this->_db->commit();
             return TRUE;
@@ -180,7 +179,6 @@ class Model_Good extends ORM_Searchable {
 
             $this->save();
 
-            Search::instance()->add($this);
 
             $this->_db->commit();
             return TRUE;
@@ -201,7 +199,6 @@ class Model_Good extends ORM_Searchable {
             $this->setName(Text::translitForURL($this->getTitle()));
             $this->save();
 
-            Search::instance()->update($this);
 
             $this->_db->commit();
             return TRUE;
