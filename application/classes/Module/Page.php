@@ -25,10 +25,10 @@ class Module_Page extends Module {
         return $content->render();
     }
 
-    public function getSanitizedTables()
+    public function getSanitizedModels()
     {
         return array(
-            'pages_pages' => 'Pages_Page'
+            'Pages_Page'
         );
     }
 

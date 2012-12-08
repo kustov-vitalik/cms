@@ -71,10 +71,10 @@ class Module_News extends Module {
         return $content->render();
     }
 
-    public function getSanitizedTables()
+    public function getSanitizedModels()
     {
         return array(
-            'news' => 'New'
+            'New'
         );
     }
 

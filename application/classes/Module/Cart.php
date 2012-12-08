@@ -7,7 +7,7 @@
 
 class Module_Cart extends Module {
 
-    public function getSanitizedTables()
+    public function getSanitizedModels()
     {
 
     }

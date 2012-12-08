@@ -30,11 +30,11 @@ class Module_Catalog extends Module {
         return $view->render();
     }
 
-    public function getSanitizedTables()
+    public function getSanitizedModels()
     {
         return array(
-            'catalogs' => 'Catalog',
-            'goods' => 'Good',
+            'Catalog',
+            'Good',
         );
     }
 

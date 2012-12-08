@@ -26,7 +26,7 @@ abstract class Module {
     }
 
     abstract public function render();
-    abstract public function getSanitizedTables();
+    abstract public function getSanitizedModels();
 
     /**
      * Получить страницу модуля
@@ -67,7 +67,7 @@ abstract class Module {
 
     public function sanitize()
     {
-        return $this->getModel()->sanitize($this->getSanitizedTables());
+        return $this->getModel()->sanitize($this->getSanitizedModels());
     }
 
 }

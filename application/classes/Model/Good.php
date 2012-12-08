@@ -7,7 +7,7 @@
 
 class Model_Good extends ORM_Searchable {
 
-    protected $_table_name    = 'goods';
+    protected $_table_name    = 'catalog_goods';
     protected $_primary_key   = 'good_id';
     protected $_table_columns = array(
         'good_id'    => NULL,
@@ -58,7 +58,7 @@ class Model_Good extends ORM_Searchable {
         $fields = array();
 
         $fields[] = new Search_Field('good_id', Searchable::UNINDEXED);
-        $fields[] = new Search_Field('title', Searchable::KEYWORD);
+        $fields[] = new Search_Field('title', Searchable::TEXT);
 
         return $fields;
     }

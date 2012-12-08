@@ -32,6 +32,11 @@ class Controller_Admin_Catalog extends Controller_Admin {
         /* @var $currentCatalog Model_Catalog */
         list($page, $currentCatalog) = $this->initPageCatalog();
 
+        if ($currentCatalog->page_id == NULL)
+        {
+            $currentCatalog->page_id = $page->pk();
+        }
+
         $catalogs = Model_Catalog::getCatalogs($page, $currentCatalog->pk());
 
         $content = View::factory('admin/catalog/list', array(

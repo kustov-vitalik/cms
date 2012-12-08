@@ -74,10 +74,10 @@ class Module_Feedback extends Module {
         return $view->render();
     }
 
-    public function getSanitizedTables()
+    public function getSanitizedModels()
     {
         return array(
-            'feedbacks' => 'Feedback'
+            'Feedback'
         );
     }
 

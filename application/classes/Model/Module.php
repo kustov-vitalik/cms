@@ -108,27 +108,21 @@ class Model_Module extends ORM {
         return $this->config;
     }
 
-    protected $_sanitized_tables = array(
-    );
-
-    public function sanitize(array $sanitizedTables)
+    public function sanitize(array $sanitizedModels)
     {
         $this->_db->begin();
         try
         {
-            foreach ($sanitizedTables as $table => $model)
+            foreach ($sanitizedModels as $model)
             {
                 $models = ORM::factory($model)
                         ->where('page_id', '=', $this->getPage()->pk())
                         ->find_all();
 
-                Search::instance()->removeItems($models);
-
-                DB::delete($table)
-                        ->where('page_id', '=', $this->getPage()->pk())
-                        ->execute();
-
-
+                foreach ($models as $m)
+                {
+                    $m->delete();
+                }
             }
 
             $this->_db->commit();
@@ -218,7 +212,7 @@ class Model_Module extends ORM {
         {
             return $this->getPage()->getConfig();
         }
-        elseif($this->getConfig()->isEnable())
+        elseif ($this->getConfig()->isEnable())
         {
             return $this->getConfig();
         }

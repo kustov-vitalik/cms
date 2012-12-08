@@ -7,7 +7,7 @@
 
 class Model_Catalog extends ORM_Searchable {
 
-    protected $_table_name    = 'catalogs';
+    protected $_table_name    = 'catalog_catalogs';
     protected $_primary_key   = 'catalog_id';
     protected $_table_columns = array(
         'catalog_id'        => NULL,
