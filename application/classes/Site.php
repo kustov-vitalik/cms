@@ -9,25 +9,37 @@ class Site {
 
     protected $pages       = NULL;
     protected $currentPage = NULL;
+    protected $structure;
+    protected $map;
     protected $config      = array();
     private static $_instance   = NULL;
 
     private function __construct()
     {
 
-        $this->config = Kohana::$config->load('site');
+    }
 
-        $url = Manager_URL::Instance()->getPageURL();
-
-
+    public function init()
+    {
+        $this->config      = Kohana::$config->load('site');
+        $url               = Manager_URL::Instance()->getPageURL();
         $this->currentPage = new Model_Page(array('url' => $url));
-        $this->getCurrentPage()->setThisCurrent();
+        $this->currentPage->setThisCurrent()->optimize();
 
-        $this->getCurrentPage()->optimize();
+        $this->map['module'][] = $this->currentPage->getModule();
 
-        //$this->test_Module();
+        /* @var $widget Model_Widget */
+        foreach ($this->currentPage->getWidgets() as $widget)
+            $this->map[$widget->getPosition()->getName()][$widget->getSequence()] = $widget;
 
+        foreach ($this->map as $positionName => $entities)
+        {
+            $view = View::factory('position/index', array(
+                        'entities' => $entities
+                    ));
 
+            $this->structure[$positionName] = $view->render();
+        }
     }
 
     private function __clone()
@@ -93,21 +105,22 @@ class Site {
         return $this->config;
     }
 
-    private function test_Module()
+    public function getStructure()
     {
-        $data = array(
-            'name'  => 'News',
-            'title' => 'Публикации'
-        );
+        return $this->structure;
+    }
 
-        $module = new Model_Module();
-        $module->saveModule($data);
-
+    public function getContentsForPosition($position)
+    {
+        if (isset($this->structure[$position]))
+        {
+            return $this->structure[$position];
+        }
     }
 
 }
 
 function ____($name)
 {
-    return Manager_PageMap::Instance()->getContentsForPosition($name);
+    return Site::Instance()->getContentsForPosition($name);
 }

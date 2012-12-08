@@ -20,8 +20,7 @@ class Controller_Base extends Controller_Template {
 
     public function action_index()
     {
-        Site::Instance();
-        Manager_PageMap::Instance();
+        Site::Instance()->init();
     }
 
     public function after()

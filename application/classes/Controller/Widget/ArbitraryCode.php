@@ -5,7 +5,7 @@
  * and open the template in the editor.
  */
 
-class Controller_Widget_ArbiraryCode extends Controller_Widget {
+class Controller_Widget_ArbitraryCode extends Controller_Widget {
 
     public $template = 'widget/arbitrarycode';
 
