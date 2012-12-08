@@ -102,6 +102,10 @@ class Site {
      */
     public function getConfig()
     {
+        if ($this->config == NULL)
+        {
+            $this->config = Kohana::$config->load('site');
+        }
         return $this->config;
     }
 
