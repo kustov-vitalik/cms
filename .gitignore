@@ -1,7 +1,5 @@
-/tz/
 /application/cache/
 /application/logs/
 /application/searchindex/
 /_install.php
 /media/kcfinder/upload/
-/modules/profilertoolbar/

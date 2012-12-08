@@ -19,12 +19,17 @@ class Site {
 
     }
 
+
     public function init()
     {
         $this->config      = Kohana::$config->load('site');
         $url               = Manager_URL::Instance()->getPageURL();
+
+        $url = Manager_URL::Instance()->getPageURL();
+
         $this->currentPage = new Model_Page(array('url' => $url));
         $this->currentPage->setThisCurrent()->optimize();
+
 
         $this->map['module'][] = $this->currentPage->getModule();
 
@@ -103,6 +108,7 @@ class Site {
     public function getConfig()
     {
         return $this->config;
+
     }
 
     public function getStructure()

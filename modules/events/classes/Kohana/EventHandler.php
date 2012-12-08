@@ -4,4 +4,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-echo $code;
+
+abstract class Kohana_EventHandler {
+
+    abstract public function update(Event $event);
+}

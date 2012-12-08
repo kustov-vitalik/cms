@@ -11,11 +11,10 @@ class Controller_Base extends Controller_Template {
 
     public function before()
     {
-        if ($this->request->is_ajax())
-        {
-            $this->auto_render = FALSE;
-        }
         parent::before();
+
+
+
     }
 
     public function action_index()
